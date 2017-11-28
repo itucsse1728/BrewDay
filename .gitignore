@@ -1,5 +1,6 @@
 .idea/
 db.sqlite3
 myvenv/
+*/migrations/*
 __pycache__/
 .DS_Store
