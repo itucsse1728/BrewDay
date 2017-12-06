@@ -40,7 +40,6 @@ class BrewView(View):
     def post(request):
         for name in request.POST:
             if name.startswith('comment'):
-                print(name)
                 pk = int(name.split('-')[-1])
                 brew = Brew.objects.get(pk=pk)
 
@@ -51,23 +50,20 @@ class BrewView(View):
                 brew.save()
                 break
 
-        return redirect('core:brew')
+            if name.startswith('rate'):
+                pk = int(name.split('-')[-1])
+                brew = Brew.objects.get(pk=pk)
+                rate = int(request.POST[name])
 
+                if brew.recipe.user != request.user:
+                    return HttpResponse('Unauthorized', status=401)
 
-class BrewUpdateRate(View):
-    @staticmethod
-    def get(request, pk, rate):
-        brew = Brew.objects.get(pk=pk)
-        rate = int(rate)
+                if rate not in range(1, 6):
+                    print(rate, '*' * 10)
+                    return HttpResponse('Bad Request', status=400)
 
-        if brew.recipe.user != request.user:
-            return HttpResponse('Unauthorized', status=401)
-
-        if rate not in range(1, 6):
-            print(rate, '*'*10)
-            return HttpResponse('Bad Request', status=400)
-
-        brew.rate = rate
-        brew.save()
+                brew.rate = rate
+                brew.save()
+                break
 
         return redirect('core:brew')

@@ -81,20 +81,28 @@ used to vertically center elements, may need modification if you're not using de
 
                                 <div class="col col-xs-8">
 
-                                    <ul class="product-page-product-rating pull-right">
+                                    <form action="" method="post" id="form-{{ brew.pk }}">
+                                        {% csrf_token %}
+                                        <ul class="product-page-product-rating pull-right">
+                                            <input type="hidden" name="rate-{{ brew.pk }}" id="rate-{{ brew.pk }}" value="value" />
+                                            {% for i in ''|center:5 %}
+                                                {% if forloop.counter <= brew.rate %}
+                                                    <li>
+                                                        <a onclick="document.getElementById('rate-{{ brew.pk }}').value = {{ forloop.counter }};
+                                                            document.getElementById('form-{{ brew.pk }}').submit();"
+                                                            style="color: orange" class="fa fa-star"></a>
+                                                    </li>
+                                                {% else %}
+                                                    <li>
+                                                        <a onclick="document.getElementById('rate-{{ brew.pk }}').value = {{ forloop.counter }};
+                                                            document.getElementById('form-{{ brew.pk }}').submit();"
+                                                            style="color: darkgray" class="fa fa-star"></a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
 
-                                        {% for i in ''|center:5 %}
-                                            {% if forloop.counter <= brew.rate %}
-                                                <li><a href="{% url "core:brew-update-rate" brew.pk forloop.counter %}"
-                                                       style="color: orange" class="fa fa-star"></a></li>
-                                            {% else %}
-                                                <li><a href="{% url "core:brew-update-rate" brew.pk forloop.counter %}"
-                                                       style="color: darkgray" class="fa fa-star"></a></li>
-                                            {% endif %}
-                                        {% endfor %}
-
-
-                                    </ul>
+                                        </ul>
+                                    </form>
 
                                 </div>
 
