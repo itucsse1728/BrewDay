@@ -140,7 +140,7 @@
                         {% if request.user.is_authenticated %}
                         <li><a href="{% url 'core:profile' %}" data-effect="mfp-move-from-top" class="">{{ request.user.first_name }}</a>
                         </li>
-                        <li><a href="{% url 'core:logout' %}" class="glyphicon glyphicon-log-out"></a>
+                        <li><a href="" class="glyphicon glyphicon-log-out"></a>
                         </li>
                         {% else %}
                         <li><a href="#nav-login-dialog" data-effect="mfp-move-from-top" class="popup-text">Login</a>
