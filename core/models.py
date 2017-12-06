@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 class Recipe(models.Model):
     name = models.CharField(max_length=20)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     batch_size = models.IntegerField()
 
@@ -43,8 +43,9 @@ class Ingredient(models.Model):
 
 class Brew(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
     note = models.TextField(max_length=500, null=True, blank=True)
+    rate = models.IntegerField(default=3)
 
     def __str__(self):
         return "{} - {}".format(self.recipe.name, self.date)
