@@ -21,7 +21,16 @@ class RecipeView(View):
 
         return HttpResponse(out)
 
+
 class IngredientView(View):
     @staticmethod
     def get(request):
         return render(request, 'index.html')
+
+
+class BrewView(View):
+    @staticmethod
+    def get(request):
+        brews = Brew.objects.filter(recipe__user=request.user).order_by('date')[:10].\
+            select_related('recipe').prefetch_related('recipe__ingredient_set')
+        return render(request, 'brew.html', locals())
