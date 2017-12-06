@@ -1,0 +1,173 @@
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Brew Day! {% block title %}{% endblock %}</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href='http://fonts.googleapis.com/css?family=Roboto:500,300,700,400italic,400' rel='stylesheet' type='text/css'>
+    <!-- <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'> -->
+    <!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'> -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mystyles.css' %}">
+
+</head>
+
+<body>
+    <div class="global-wrapper clearfix" id="global-wrapper">
+        <div class="navbar-before mobile-hidden">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="navbar-before-sign">Brew Day!</p>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="nav navbar-nav navbar-right navbar-right-no-mar">
+                            <li><a href="#">About</a>
+                            </li>
+                            <li><a href="#">Contact</a>
+                            </li>
+                            <li><a href="#">Help</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mfp-with-anim mfp-hide mfp-dialog clearfix" id="nav-login-dialog">
+            <h3 class="widget-title">Login</h3>
+            <p>Welcome, please login.</p>
+            <hr />
+
+            <form method="post" action="{% url 'core:login' %}">{% csrf_token %}
+                <div class="form-group">
+                    <label>Email</label>
+                    <input class="form-control" name="username" type="text" required/>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input class="form-control" name="password" type="password" required/>
+
+                </div>
+
+                <input class="btn btn-primary" type="submit" value="Login" />
+            </form>
+
+            <div class="gap gap-small"></div>
+            <ul class="list-inline">
+                <li><a href="#nav-account-dialog" class="popup-text">Not a member?</a>
+                </li>
+                <li><a href="#nav-pwd-dialog" class="popup-text">Forgot my password.</a>
+                </li>
+            </ul>
+        </div>
+        <div class="mfp-with-anim mfp-hide mfp-dialog clearfix" id="nav-account-dialog">
+            <h3 class="widget-title">Create Brew Day Account!</h3>
+            <p>Brew Brew Brew!</p>
+            <hr />
+
+            <form method="post" action="{% url 'core:register' %}">{% csrf_token %}
+                <div class="form-group">
+                    <label>Email</label>
+                    <input class="form-control" name="email" type="text" required/>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input class="form-control" name="password" type="password" required/>
+                </div>
+                <div class="form-group">
+                    <label>Password Again</label>
+                    <input class="form-control" name="password2" type="password" required/>
+
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                        <input class="i-check" type="checkbox" required/>I have read and understand the user contract.</label>
+                </div>
+                <input class="btn btn-primary" type="submit" value="Sign up" />
+            </form>
+
+            <div class="gap gap-small"></div>
+            <ul class="list-inline">
+                <li><a href="#nav-login-dialog" class="popup-text">Already have an account?</a>
+                </li>
+            </ul>
+        </div>
+        <div class="mfp-with-anim mfp-hide mfp-dialog clearfix" id="nav-pwd-dialog">
+            <h3 class="widget-title">Reset Password</h3>
+            <p>Enter your e-mail.</p>
+            <hr />
+            <form>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input class="form-control" type="text" />
+                </div>
+                <input class="btn btn-primary" type="submit" value="Şifreyi Resetle" />
+            </form>
+        </div>
+        <nav class="navbar navbar-inverse navbar-main yamm">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-nav-collapse" area_expanded="false"><span class="sr-only">Main Menu</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="">
+                        <p>Brew Day!</p>
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-nav-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown"><a href="#"> Recipes<i class="drop-caret" data-toggle="dropdown"></i></a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown"><a href="#"> Brew!<i class="drop-caret" data-toggle="dropdown"></i></a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown"><a href="#"> Recommendation Tool<i class="drop-caret" data-toggle="dropdown"></i></a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if request.user.is_authenticated %}
+                        <li><a href="{% url 'core:profile_edit' %}" data-effect="mfp-move-from-top" class="">{{ request.user.first_name }}</a>
+                        </li>
+                        <li><a href="{% url 'core:logout' %}" class="glyphicon glyphicon-log-out"></a>
+                        </li>
+                        {% else %}
+                        <li><a href="#nav-login-dialog" data-effect="mfp-move-from-top" class="popup-text">Login</a>
+                        </li>
+                        <li><a href="#nav-account-dialog" data-effect="mfp-move-from-top" class="popup-text">Sign up</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% block content %}{% endblock %}
+
+        <div class="gap"></div>
+    </div>
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/icheck.js' %}"></script>
+    <script src="{% static 'js/ionrangeslider.js' %}"></script>
+    <script src="{% static 'js/jqzoom.js' %}"></script>
+    <script src="{% static 'js/card-payment.js' %}"></script>
+    <script src="{% static 'js/owl-carousel.js' %}"></script>
+    <script src="{% static 'js/magnific.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+
+    {% block style %}{% endblock %}
+
+</body>
+</html>

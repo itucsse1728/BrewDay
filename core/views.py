@@ -21,4 +21,7 @@ class RecipeView(View):
 
         return HttpResponse(out)
 
-
+class IngredientView(View):
+    @staticmethod
+    def get(request):
+        return render(request, 'index.html')
