@@ -4,3 +4,4 @@ myvenv/
 */migrations/*
 __pycache__/
 .DS_Store
+*.pyc
