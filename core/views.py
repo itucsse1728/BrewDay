@@ -7,7 +7,10 @@ from .models import Recipe, Ingredient, Brew
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-
+class HomeView(View):
+    @staticmethod
+    def get(request):
+        return render(request, 'home.html')
 
 class RecipeView(View):
     @staticmethod
