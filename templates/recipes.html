@@ -58,6 +58,29 @@ used to vertically center elements, may need modification if you're not using de
 </style>
 <div class="gap-small"></div>
 
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="product">
+            <ul class="product-labels">
+                <li>Add Recipe</li>
+            </ul>
+            <div class="box-lg" >
+                <div class="row">
+                    <p>Recipe adını burada al</p>
+                </div>
+                <div class="row">
+                    <p>Ingredientları burada al</p>
+                </div>
+                <div class="row">
+                    <a class="btn btn-success pull-right"><em class="fa fa-beer"> Create Recipe</em></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="gap-small"></div>
+
 <div class="row" data-gutter="15">
     {% for recipe in recipes %}
         <div class="col-md-4 col-md-offset-1">
@@ -110,6 +133,7 @@ used to vertically center elements, may need modification if you're not using de
             </div>
         </div>
     </div>
+        <div class="col-md-1"></div>
     {% endfor %}
 </div>
 {% endblock %}
