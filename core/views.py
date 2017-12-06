@@ -28,7 +28,6 @@ class IngredientView(LoginRequiredMixin, View):
     @staticmethod
     def post(request):
         ingredients = request.user.ingredient_set.all()
-        print(request.POST)
         for ingredient in ingredients:
             if request.POST.get(ingredient.name, None):
                 ingredient.amount = float(request.POST[ingredient.name])
@@ -66,7 +65,7 @@ class BrewView(View):
         brews = Brew.objects.filter(recipe__user=request.user).order_by('-rate', 'date')[:10].\
             select_related('recipe').prefetch_related('recipe__ingredient_set')
 
-        return render(request, 'brew.html', locals())
+        return render(request, 'brew.html', {'brews': brews})
 
     @staticmethod
     def post(request):
@@ -91,11 +90,13 @@ class BrewView(View):
                     return HttpResponse('Unauthorized', status=401)
 
                 if rate not in range(1, 6):
-                    print(rate, '*' * 10)
                     return HttpResponse('Bad Request', status=400)
 
                 brew.rate = rate
                 brew.save()
                 break
 
-        return redirect('core:brew')
+        brews = Brew.objects.filter(recipe__user=request.user).order_by('-rate', 'date')[:10]. \
+            select_related('recipe').prefetch_related('recipe__ingredient_set')
+
+        return render(request, 'brew.html', {'brews': brews})
