@@ -120,28 +120,28 @@
                 <div class="navbar-header">
                     <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-nav-collapse" area_expanded="false"><span class="sr-only">Main Menu</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="">
+                    <a class="navbar-brand" href="{% url 'core:home' %}">
                         <p>Piva</p>
                     </a>
                 </div>
                 <div class="collapse navbar-collapse" id="main-nav-collapse">
                     <ul class="nav navbar-nav">
-                        <li class="dropdown"><a href="#"> Recipes<i class="drop-caret" data-toggle="dropdown"></i></a>
+                        <li class="dropdown"><a href="{% url 'core:recipe' %}"> Recipes<i class="drop-caret" data-toggle="dropdown"></i></a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        <li class="dropdown"><a href="{% url "core:brew" %}"> Brew!<i class="drop-caret" data-toggle="dropdown"></i></a>
+                        <li class="dropdown"><a href="{% url 'core:brew' %}"> Brew!<i class="drop-caret" data-toggle="dropdown"></i></a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav">
-                        <li class="dropdown"><a href="#"> Recommendation Tool<i class="drop-caret" data-toggle="dropdown"></i></a>
+                        <li class="dropdown"><a href="{% url 'core:recommendation' %}"> Recommendation Tool<i class="drop-caret" data-toggle="dropdown"></i></a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         {% if request.user.is_authenticated %}
-                        <li><a href="{% url "core:profile" %}" data-effect="mfp-move-from-top" class="">{{ request.user.first_name }}</a>
+                        <li><a href="{% url 'core:profile' %}" data-effect="mfp-move-from-top" class="">{{ request.user.username }}</a>
                         </li>
-                        <li><a href="" class="glyphicon glyphicon-log-out"></a>
+                        <li><a href="{% url 'core:logout' %}" class="glyphicon glyphicon-log-out"></a>
                         </li>
                         {% else %}
                         <li><a href="#nav-login-dialog" data-effect="mfp-move-from-top" class="popup-text">Login</a>
