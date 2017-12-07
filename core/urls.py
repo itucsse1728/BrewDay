@@ -7,7 +7,7 @@ app_name = 'core'
 
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(success_url='core:home'), name='login'),
-    path('logout/', 'django.contrib.auth.views.logout',{'next_page': reverse_lazy('home')}, name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('brew/', views.BrewView.as_view(), name='brew'),
     path('recipe/', views.RecipeView.as_view(), name='recipe'),
     path('profile/', views.IngredientView.as_view(), name='profile'),
