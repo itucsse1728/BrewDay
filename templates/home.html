@@ -1,0 +1,33 @@
+{% extends 'layout-brew.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+{% load staticfiles %}
+<div class="owl-carousel owl-loaded owl-nav-dots-inner" data-options='{"items":1,"loop":true}'>
+    <div class="owl-item">
+        <div class="slider-item" style="background-color:#3D3D3D; background-image: url('{% static 'img/bg-1.jpg' %}')">
+            <div class="container">
+                <div class="slider-item-inner">
+                    <div class="slider-item-caption-left slider-item-caption-white">
+                        <h4 class="slider-item-caption-title">Are you ready for some brewing experience?</h4>
+                        <p class="slider-item-caption-desc">If yes, Piva is a great place for you.</p><a class="btn btn-lg btn-ghost btn-white" href="#">SAY NO MORE!</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="owl-item">
+        <div class="slider-item" style="background-color:#3D3D3D; background-image: url('{% static 'img/bg-2.png' %}')">
+            <div class="container">
+                <div class="slider-item-inner">
+                    <div class="slider-item-caption-left slider-item-caption-white">
+                        <h4 class="slider-item-caption-title">Enter your ingredients and start brewing!</h4>
+                        <a class="btn btn-lg btn-ghost btn-white" href="#">Register</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

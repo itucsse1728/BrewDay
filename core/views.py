@@ -3,9 +3,14 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.db.models import Prefetch, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from .models import Recipe, Ingredient, Brew
 
+
+class HomeView(View):
+    @staticmethod
+    def get(request):
+        return render(request, 'home.html')
+      
 
 class RecipeView(View):
     @staticmethod
