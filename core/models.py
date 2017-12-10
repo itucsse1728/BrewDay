@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
-
 
 class Recipe(models.Model):
     name = models.CharField(max_length=20)
@@ -37,6 +35,11 @@ class Ingredient(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, null=True, blank=True)
 
+    @staticmethod
+    def init_ingredients(user, ingredients):
+        Ingredient.objects.bulk_create(Ingredient(name=ingredient, amount=0.0, user=user)
+                                       for ingredient in ingredients)
+
     def __str__(self):
         return self.name
 
@@ -49,4 +52,3 @@ class Brew(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.recipe.name, self.date)
-

@@ -1,9 +1,22 @@
 from django.views import View
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Prefetch, Q
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+
 from .models import Recipe, Ingredient, Brew
+from .forms import RegisterForm
+
+INGREDIENTS = (
+    'malt',
+    'hops',
+    'yeast',
+    'sugar',
+    'additive'
+)
 
 
 class HomeView(View):
@@ -26,7 +39,7 @@ class IngredientView(LoginRequiredMixin, View):
     def get(request):
         ingredients = request.user.ingredient_set.all()
         return render(request, 'index.html', locals())
-      
+
     @staticmethod
     def post(request):
         ingredients = request.user.ingredient_set.all()
@@ -38,7 +51,7 @@ class IngredientView(LoginRequiredMixin, View):
         return render(request, "index.html", locals())
 
 
-class RecommendationView(View):
+class RecommendationView(LoginRequiredMixin, View):
     @staticmethod
     def get(request):
         ingredients = request.user.ingredient_set.all()
@@ -102,3 +115,24 @@ class BrewView(LoginRequiredMixin, View):
             select_related('recipe').prefetch_related('recipe__ingredient_set')
 
         return render(request, 'brew.html', {'brews': brews})
+
+
+class RegisterView(CreateView):
+    form_class = RegisterForm
+    template_name = 'register.html'
+    success_url = reverse_lazy('core:home')
+
+    def form_valid(self, form):
+        if self.request.POST.get('password2') != form.cleaned_data.get('password'):
+            return self.form_invalid(form)
+
+        self.object = form.save(commit=False)
+        self.object.set_password(form.cleaned_data.get('password'))
+        Ingredient.init_ingredients(self.object, INGREDIENTS)
+        self.object.save()
+        login(self.request, self.object)
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        print(form.errors)
+        return super().form_invalid(form)

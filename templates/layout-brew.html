@@ -50,7 +50,7 @@
 
             <form method="post" action="{% url 'core:login' %}">{% csrf_token %}
                 <div class="form-group">
-                    <label>Email</label>
+                    <label>Username</label>
                     <input class="form-control" name="username" type="text" required/>
                 </div>
                 <div class="form-group">
@@ -76,6 +76,10 @@
             <hr />
 
             <form method="post" action="{% url 'core:register' %}">{% csrf_token %}
+                <div class="form-group">
+                    <label>Username</label>
+                    <input class="form-control" name="username" type="text" required/>
+                </div>
                 <div class="form-group">
                     <label>Email</label>
                     <input class="form-control" name="email" type="text" required/>
