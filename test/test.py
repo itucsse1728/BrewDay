@@ -130,9 +130,46 @@ class Test(object):
 
         assert textarea.text == random_comment
 
+    def check_recommendation(self):
+        self.browser.get(self.site + '/recommendation')
+
+        product = WebDriverWait(self.browser, self.delay).until(
+            lambda x: x.find_element_by_xpath('//div[@class="product"]'))
+
+        tbody = product.find_element_by_xpath('.//table/tbody')
+
+        ingredients = {}
+
+        for row in tbody.find_elements_by_xpath('./tr'):
+            name, amount = row.find_elements_by_tag_name('td')
+            name, amount = name.text, amount.text
+            ingredients[name] = float(amount)
+
+        button = self.browser.find_element_by_xpath('//button[@name="submit"]')
+
+        button.click()
+
+        products = WebDriverWait(self.browser, self.delay).until(
+            lambda x: x.find_elements_by_xpath('//div[@class="product"]'))
+
+        recipes = products[2:]
+
+        for recipe in recipes:
+            tbody = recipe.find_element_by_xpath('.//table/tbody')
+
+            for row in tbody.find_elements_by_tag_name('tr'):
+                name, amount = row.find_elements_by_tag_name('td')
+                name, amount = name.text, float(amount.text)
+
+
+                if amount and name not in ingredients:
+                    raise ValueError('invalid recommendation')
+
+                elif name in ingredients and amount > ingredients[name]:
+                    raise ValueError('Invalid amount for {} : {} > {}'.format(name, amount, ingredients[name]))
 
     def run(self):
-        self.browser = webdriver.Chrome('/Users/ismail/Downloads/chromedriver')
+        self.browser = webdriver.Chrome(r'C:\Users\msi-nb\Documents\selenium\chromedriver.exe')
 
         for attr in __class__.__dict__:
             if callable(getattr(self, attr)) and attr.startswith('check'):
