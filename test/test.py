@@ -10,7 +10,7 @@ class Test(object):
     def __init__(self):
         self.site = 'http://127.0.0.1:8000'
         self.delay = 2  # seconds
-        self.username = 'ismail2'
+        self.username = 'ismail3'
         self.email = 'ismail@ismail.com'
         self.password = 'namdar123'
         self.browser = None
@@ -28,11 +28,11 @@ class Test(object):
         popups = WebDriverWait(self.browser, self.delay).until(
             lambda x: x.find_elements_by_xpath('//div[@class="mfp-with-anim mfp-hide mfp-dialog clearfix"]'))
 
+
         username_input = popups[1].find_element_by_xpath('//input[@name="username"]')
         email_input = popups[1].find_element_by_xpath('//input[@name="email"]')
         password_input = popups[1].find_element_by_xpath('//input[@name="password"]')
         password2_input = popups[1].find_element_by_xpath('//input[@name="password2"]')
-        checkbox_input = popups[1].find_element_by_xpath('//input[@class="i-check"]')
 
         signup_button = popups[1].find_element_by_xpath('//input[@name="sign-up"]')
 
@@ -40,11 +40,12 @@ class Test(object):
         email_input.send_keys(self.email)
         password_input.send_keys(self.password)
         password2_input.send_keys(self.password)
-        checkbox_input.click()
 
         signup_button.click()
 
-        assert True
+        assert (self.browser.find_element_by_xpath('//a[@name="navbar-name"]').text == self.username)
+
+        self.browser.find_element_by_xpath('//a[@name="navbar-logout"]').click()
 
     def check_sign_in(self):
         url = '/'
@@ -61,23 +62,15 @@ class Test(object):
 
         username_input = popup.find_element_by_xpath('//input[@name="username"]')
         password_input = popup.find_element_by_xpath('//input[@name="password"]')
+        login_input = popup.find_element_by_xpath('//input[@name="pop-up-login-button"]')
 
-    def check_login(self):
-        url = '/admin'
 
-        self.browser.get(self.site + url)
+        username_input.send_keys(self.username)
+        password_input.send_keys(self.password)
 
-        user_input = WebDriverWait(self.browser, self.delay).until(
-            lambda x: x.find_element_by_xpath('//input[@name="username"]'))
-        pass_input = self.browser.find_element_by_xpath('//input[@name="password"]')
+        login_input.click()
 
-        user_input.send_keys(self.username)
-        pass_input.send_keys(self.password)
-
-        pass_input.submit()
-
-        WebDriverWait(self.browser, self.delay).until(
-            lambda x: x.find_element_by_xpath('//div[@id="user-tools"]'))
+        assert (self.browser.find_element_by_xpath('//a[@name="navbar-name"]').text == self.username)
 
     def check_brew(self):
         url = '/brew'

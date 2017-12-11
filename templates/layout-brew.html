@@ -59,7 +59,7 @@
 
                 </div>
 
-                <input class="btn btn-primary" type="submit" value="Login" />
+                <input class="btn btn-primary" name="pop-up-login-button" type="submit" value="Login" />
             </form>
 
             <div class="gap gap-small"></div>
@@ -95,10 +95,10 @@
                 </div>
 
                 <div class="checkbox">
-                    <label>
-                        <input class="i-check" type="checkbox" required/>I have read and understand the user contract.</label>
+                    <p>
+                        <p>I have read and understand the user contract.</p>
                 </div>
-                <input class="btn btn-primary" type="submit" value="Sign up" />
+                <input class="btn btn-primary" type="submit" name="sign-up" value="Sign up" />
             </form>
 
             <div class="gap gap-small"></div>
@@ -131,7 +131,7 @@
                 <div class="collapse navbar-collapse" id="main-nav-collapse">
                     {% if request.user.is_authenticated %}
                         <ul class="nav navbar-nav">
-                        <li class="dropdown"><a href="{% url 'core:profile' %}" data-effect="mfp-move-from-top" class="">{{ request.user.username }}</a>
+                        <li class="dropdown"><a href="{% url 'core:profile' %}" name="navbar-name" data-effect="mfp-move-from-top" class="">{{ request.user.username }}</a>
                         </li>
                     </ul>
                     {% endif %}
@@ -149,12 +149,12 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         {% if request.user.is_authenticated %}
-                        <li><a href="{% url 'core:logout' %}" class="glyphicon glyphicon-log-out"></a>
+                        <li><a href="{% url 'core:logout' %}" name="navbar-logout" class="glyphicon glyphicon-log-out"></a>
                         </li>
                         {% else %}
-                        <li><a href="#nav-login-dialog" data-effect="mfp-move-from-top" class="popup-text">Login</a>
+                        <li><a href="#nav-login-dialog" data-effect="mfp-move-from-top" name="pop-up-login" class="popup-text">Login</a>
                         </li>
-                        <li><a href="#nav-account-dialog" data-effect="mfp-move-from-top" class="popup-text">Sign up</a>
+                        <li><a href="#nav-account-dialog" data-effect="mfp-move-from-top" name="pop-up-signup" class="popup-text">Sign up</a>
                         </li>
                         {% endif %}
                     </ul>
