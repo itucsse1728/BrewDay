@@ -86,46 +86,35 @@ used to vertically center elements, may need modification if you're not using de
                             <tbody>
                                 <tr>
                                     <td>Malt</td>
-                                    <td><input name="malt" type="text" placeholder="0.0" required></td>
+                                    <td><input name="Malt" type="text" placeholder="0.0" ></td>
                                 </tr>
                                 <tr>
                                     <td>Hops</td>
-                                    <td><input name="hops" type="text" placeholder="0.0" required></td>
+                                    <td><input name="Hops" type="text" placeholder="0.0" ></td>
                                 </tr>
                                 <tr>
                                     <td>Yeast</td>
-                                    <td><input name="yeast" type="text" placeholder="0.0" required></td>
+                                    <td><input name="Yeast" type="text" placeholder="0.0" ></td>
                                 </tr>
                                 <tr>
                                     <td>Sugar</td>
-                                    <td><input name="sugar" type="text" placeholder="0.0" required></td>
+                                    <td><input name="Sugar" type="text" placeholder="0.0" ></td>
                                 </tr>
                                 <tr>
                                     <td>Additive</td>
-                                    <td><input name="additive" type="text" placeholder="0.0" required></td>
+                                    <td><input name="Additive" type="text" placeholder="0.0" ></td>
+                                </tr>
+                                <tr>
+                                    <td><input name="new-ingredient-name" type="text" placeholder="Enter the name..."></td>
+                                    <td><input name="new-ingredient-amount" type="text" placeholder="Enter the amount..."></td>
                                 </tr>
                             </tbody>
                         </table>
+
                         <div class="gap-small"></div>
                     </form>
                 </div>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -134,53 +123,60 @@ used to vertically center elements, may need modification if you're not using de
     <div class="col-md-1"></div>
 
     {% for recipe in recipes %}
-        <div class="col-md-4 col-md-offset-1">
-            <div class="product">
-                <ul class="product-labels">
-                    <li>{{ recipe.name }}</li>
-                </ul>
-                <div class="box-lg" >
-                    <div class="gap-small"></div>
-                    <div class="gap-small"></div>
-                    <div class="row">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col col-xs-4">
-                                    <h3 class="panel-title">Ingredients</h3>
-                                </div>
-                                <div class="col col-xs-8">
-                                    <a class="btn btn-danger pull-right"><em class="fa fa-trash"> Delete</em></a>
-                                    <a class="btn btn-success pull-right" style="margin-right: 10px;"><em class="fa fa-beer"> Brew!</em></a>
+        <form action="{% url 'core:recipe-management' %}" method="post">{% csrf_token %}
+            <div class="col-md-4 col-md-offset-1">
+                <div class="product">
+                    <ul class="product-labels">
+                        <li>{{ recipe.name }}</li>
+                    </ul>
+                    <div class="box-lg" >
+                        <div class="gap-small"></div>
+                        <div class="gap-small"></div>
+                        <div class="row">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col col-xs-4">
+                                        <h3 class="panel-title">Ingredients</h3>
+                                    </div>
+                                    <div class="col col-xs-8">
+                                        <button class="btn btn-danger pull-right" name="delete"><em class="fa fa-trash"> Delete</em></button>
+                                        <button class="btn btn-success pull-right" name="brew" style="margin-right: 10px;"><em class="fa fa-beer"> Brew!</em></button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-striped table-bordered table-list">
-                                <thead>
-                                    <tr>
-                                        <th>Ingredient</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for item in recipe.ingredient_set.all %}
+                            <div class="panel-body">
+                                <table class="table table-striped table-bordered table-list">
+                                    <thead>
                                         <tr>
-                                            <td>{{ item.name }}</td>
-                                            <td><input name="{{ item.name }}" type="text" placeholder="{{ item.amount }}"></td>
+                                            <th>Ingredient</th>
+                                            <th>Amount</th>
                                         </tr>
-                                    {% endfor %}
+                                    </thead>
+                                    <tbody>
+                                        {% for item in recipe.ingredient_set.all %}
+                                            <tr>
+                                                <td>{{ item.name }}</td>
+                                                <td><input name="{{ item.name }}" type="text" placeholder="{{ item.amount }}"></td>
+                                            </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td><input name="new-ingredient-name" type="text" placeholder="Enter the name..."></td>
+                                            <td><input name="new-ingredient-amount" type="text" placeholder="Enter the amount..."></td>
+                                        </tr>
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
 
-                            <div class="gap-small"></div>
-                            <button class="btn btn-info pull-right" name="submit"><em class="fa fa-pencil"> Update</em></button>
+                                <div class="gap-small"></div>
+                                <button class="btn btn-info pull-right" name="update"><em class="fa fa-pencil"> Update</em></button>
+                                <input name="recipe-id" value="{{ recipe.id }}" hidden>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-1"></div>
+            <div class="col-md-1"></div>
+        </form>
     {% endfor %}
 </div>
 {% endblock %}

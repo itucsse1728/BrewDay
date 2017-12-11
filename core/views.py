@@ -1,6 +1,6 @@
 from django.views import View
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Prefetch, Q, F
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,11 +11,11 @@ from .models import Recipe, Ingredient, Brew
 from .forms import RegisterForm
 
 INGREDIENTS = (
-    'malt',
-    'hops',
-    'yeast',
-    'sugar',
-    'additive'
+    'Malt',
+    'Hops',
+    'Yeast',
+    'Sugar',
+    'Additive'
 )
 
 
@@ -25,7 +25,7 @@ class HomeView(View):
         return render(request, 'home.html')
       
 
-class RecipeView(View):
+class RecipeView(LoginRequiredMixin, View):
     @staticmethod
     def get(request):
         recipes = Recipe.objects.filter(user=request.user).order_by('date').prefetch_related('ingredient_set')
@@ -34,6 +34,10 @@ class RecipeView(View):
 
     @staticmethod
     def post(request):
+        ingredient_name = request.POST.get("new-ingredient-name", None)
+        ingredient_amount = request.POST.get("new-ingredient-amount", None)
+        flag = False
+
         recipes = Recipe.objects.filter(user=request.user).order_by('date').prefetch_related('ingredient_set')
         recipeName = ""
         if request.POST.get('recipeName', None):
@@ -46,7 +50,51 @@ class RecipeView(View):
                 amount = float(0)
             ingre = Ingredient.objects.create(name = ingredient, amount = amount, recipe = recipe)
 
+            if ingredient == ingredient_name:
+                flag = True
+
+        if ingredient_name and ingredient_amount and not flag:
+            ingredient = Ingredient(name=ingredient_name, amount=ingredient_amount, recipe=recipe)
+            ingredient.save()
+
         return render(request, 'recipes.html', locals())
+
+
+class RecipeManagement(LoginRequiredMixin, View):
+    @staticmethod
+    def post(request):
+        flag = False
+        recipe_id = request.POST.get("recipe-id", None)
+
+        recipe = get_object_or_404(Recipe, pk=recipe_id)
+
+        if "brew" in request.POST:
+            recipe.make_brew()
+
+        elif "update" in request.POST:
+            ingredients = list(recipe.ingredient_set.all())
+
+            ingredient_name = request.POST.get("new-ingredient-name", None)
+            ingredient_amount = request.POST.get("new-ingredient-amount", None)
+
+            for ingredient in ingredients:
+                if request.POST.get(ingredient.name, None):
+                    ingredient.amount = float(request.POST[ingredient.name])
+                    ingredient.save()
+
+                if ingredient.name == ingredient_name:
+                    flag = True
+
+            if ingredient_name and ingredient_amount and not flag:
+                ingredient = Ingredient(name=ingredient_name, amount=float(ingredient_amount), recipe=recipe)
+                ingredient.save()
+
+        else:
+            recipe.delete()
+
+        return redirect("core:recipe")
+
+
 
 
 class IngredientView(LoginRequiredMixin, View):
@@ -57,14 +105,32 @@ class IngredientView(LoginRequiredMixin, View):
 
     @staticmethod
     def post(request):
+        flag = False
+
         ingredients = request.user.ingredient_set.all()
-        for ingredient in ingredients:
-            if request.POST.get(ingredient.name, None):
-                ingredient.amount = float(request.POST[ingredient.name])
+
+        if "delete" in request.POST:
+            ingredient_id = request.POST.get("delete")
+
+            get_object_or_404(Ingredient.objects.select_related("user"), pk=ingredient_id, user=request.user).delete()
+
+        else:
+            ingredients = list(ingredients)
+            ingredient_name = request.POST.get("new-ingredient-name", None)
+            ingredient_amount = request.POST.get("new-ingredient-amount", None)
+
+            for ingredient in ingredients:
+                if request.POST.get(ingredient.name, None):
+                    ingredient.amount = float(request.POST[ingredient.name])
+                    ingredient.save()
+
+                if ingredient.name == ingredient_name:
+                    flag = True
+
+            if ingredient_name and ingredient_amount and not flag:
+                ingredient = Ingredient(name=ingredient_name, amount=float(ingredient_amount), user=request.user)
                 ingredient.save()
-
-            #if request.POST.get("new-ingredient-name", None) and request.POST.get("new-ingredient-amount", None):
-
+                ingredients.append(ingredient)
 
 
         return render(request, "index.html", locals())
@@ -80,23 +146,31 @@ class RecommendationView(LoginRequiredMixin, View):
     def post(request):
         ingredients = request.user.ingredient_set.all()
         ings = {ing.name: ing.amount for ing in ingredients}
-        queryset = Ingredient.objects.filter(name__in=ings)
+        queryset = Ingredient.objects.all()
 
         recipes = Recipe.objects.prefetch_related(
             Prefetch('ingredient_set',
                      queryset=queryset)
             ).exclude(~Q(ingredient__name__in=ings))
-        print(ings)
-        for name, amount in ings.items():
-            recipes = recipes.exclude(Q(ingredient__name=name) & Q(ingredient__amount__gt=amount))
 
+        for k,v in ings.items():
+            print(k, v)
+
+        for name, amount in ings.items():
+            print("********")
+            recipes = recipes.exclude(Q(ingredient__name=name) & Q(ingredient__amount__gt=amount))
+            print(name ,amount)
+            for recipe in recipes:
+                for i in recipe.ingredient_set.all():
+                    print(i.name, i.amount, 'self:', amount)
+                print("-----")
         return render(request, 'recommendation.html', locals())
 
 
 class BrewView(LoginRequiredMixin, View):
     @staticmethod
     def get(request):
-        brews = Brew.objects.filter(recipe__user=request.user).order_by('-rate', 'date')[:10].\
+        brews = Brew.objects.filter(user=request.user).order_by('-rate', 'date')[:10].\
             select_related('recipe').prefetch_related('recipe__ingredient_set')
 
         return render(request, 'brew.html', {'brews': brews})
@@ -108,7 +182,7 @@ class BrewView(LoginRequiredMixin, View):
                 pk = int(name.split('-')[-1])
                 brew = Brew.objects.get(pk=pk)
 
-                if brew.recipe.user != request.user:
+                if brew.user != request.user:
                     return HttpResponse('Unauthorized', status=401)
 
                 brew.note = request.POST[name]
@@ -120,7 +194,7 @@ class BrewView(LoginRequiredMixin, View):
                 brew = Brew.objects.get(pk=pk)
                 rate = int(request.POST[name])
 
-                if brew.recipe.user != request.user:
+                if brew.user != request.user:
                     return HttpResponse('Unauthorized', status=401)
 
                 if rate not in range(1, 6):
@@ -130,7 +204,7 @@ class BrewView(LoginRequiredMixin, View):
                 brew.save()
                 break
 
-        brews = Brew.objects.filter(recipe__user=request.user).order_by('-rate', 'date')[:10]. \
+        brews = Brew.objects.filter(user=request.user).order_by('-rate', 'date')[:10]. \
             select_related('recipe').prefetch_related('recipe__ingredient_set')
 
         return render(request, 'brew.html', {'brews': brews})
