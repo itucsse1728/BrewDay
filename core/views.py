@@ -30,6 +30,21 @@ class RecipeView(View):
     def get(request):
         recipes = Recipe.objects.filter(user=request.user).order_by('date').prefetch_related('ingredient_set')
         # brew = recipe.make_brew()
+        return render(request, 'recipes.html', locals())
+
+    @staticmethod
+    def post(request):
+        recipes = Recipe.objects.filter(user=request.user).order_by('date').prefetch_related('ingredient_set')
+        recipeName = ""
+        if request.POST.get('recipeName', None):
+            recipeName = str(request.POST['recipeName'])
+        recipe = Recipe.objects.create(name=recipeName, batch_size=11, user = request.user)
+        for ingredient in INGREDIENTS:
+            if request.POST.get(ingredient, None):
+                amount = float(request.POST[ingredient])
+            else:
+                amount = float(0)
+            ingre = Ingredient.objects.create(name = ingredient, amount = amount, recipe = recipe)
 
         return render(request, 'recipes.html', locals())
 
