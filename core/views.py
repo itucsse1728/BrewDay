@@ -157,9 +157,16 @@ class RecommendationView(LoginRequiredMixin, View):
             print(k, v)
 
         for name, amount in ings.items():
-            print("********")
-            recipes = recipes.exclude(Q(ingredient__name=name) & Q(ingredient__amount__gt=amount))
-            print(name ,amount)
+
+            print(name, amount)
+            print("before")
+            for recipe in recipes:
+                for i in recipe.ingredient_set.all():
+                    print(i.name, i.amount, 'self:', amount)
+                print("-----")
+            recipes = recipes.exclude(Q(ingredient__name=name) & ~Q(ingredient__amount__lt=amount))
+
+            print("after")
             for recipe in recipes:
                 for i in recipe.ingredient_set.all():
                     print(i.name, i.amount, 'self:', amount)
