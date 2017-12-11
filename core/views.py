@@ -1,7 +1,7 @@
 from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Prefetch, Q, F
+from django.db.models import Prefetch, Q, F, Count
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
@@ -145,34 +145,24 @@ class RecommendationView(LoginRequiredMixin, View):
     @staticmethod
     def post(request):
         ingredients = request.user.ingredient_set.all()
-        ings = {ing.name: ing.amount for ing in ingredients}
-        queryset = Ingredient.objects.all()
+        self_ings = {ing.name: ing.amount for ing in ingredients if ing.amount}
 
-        recipes = Recipe.objects.prefetch_related(
-            Prefetch('ingredient_set',
-                     queryset=queryset)
-            ).exclude(~Q(ingredient__name__in=ings))
+        recipes = Recipe.objects.prefetch_related('ingredient_set')
+        recipes = {i:recipe for i, recipe in enumerate(recipes)}
+        output = []
 
-        for k,v in ings.items():
-            print(k, v)
+        for i, recipe in recipes.items():
+            for ingredient in recipe.ingredient_set.all():
+                if ingredient.name not in self_ings and ingredient.amount > 0.0:
+                    break
+                elif ingredient.name in self_ings and ingredient.amount > self_ings[ingredient.name]:
+                    break
+            else:
+                output.append(i)
 
-        for name, amount in ings.items():
+        recipes = [recipes[i] for i in output]
 
-            print(name, amount)
-            print("before")
-            for recipe in recipes:
-                for i in recipe.ingredient_set.all():
-                    print(i.name, i.amount, 'self:', amount)
-                print("-----")
-            recipes = recipes.exclude(Q(ingredient__name=name) & ~Q(ingredient__amount__lt=amount))
-
-            print("after")
-            for recipe in recipes:
-                for i in recipe.ingredient_set.all():
-                    print(i.name, i.amount, 'self:', amount)
-                print("-----")
         return render(request, 'recommendation.html', locals())
-
 
 class BrewView(LoginRequiredMixin, View):
     @staticmethod
