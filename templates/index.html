@@ -113,16 +113,16 @@ used to vertically center elements, may need modification if you're not using de
                         </thead>
                         <tbody>
                             {% for item in ingredients %}
-                                    <tr>
-                                        <td>{{ item.name }}</td>
-                                        <td><input name="{{ item.name }}" type="text" placeholder="{{ item.amount }}"></td>
-                                        <td><button class="btn btn-danger pull-right" name="delete" value="{{ item.id }}"><em class="fa fa-trash"></em></button></td>
-                                    </tr>
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td><input name="{{ item.name }}" type="text" placeholder="{{ item.amount }}"></td>
+                                    <td><button class="btn btn-danger pull-right" name="delete" value="{{ item.id }}"><em class="fa fa-trash"></em></button></td>
+                                </tr>
                             {% endfor %}
-                                    <tr>
-                                        <td><input name="new-ingredient-name" type="text" placeholder="Enter the name..."></td>
-                                        <td><input name="new-ingredient-amount" type="text" placeholder="Enter the amount..."></td>
-                                    </tr>
+                                <tr>
+                                    <td><input name="new-ingredient-name" type="text" placeholder="Enter the name..."></td>
+                                    <td><input name="new-ingredient-amount" type="text" placeholder="Enter the amount..."></td>
+                                </tr>
                         </tbody>
                     </table>
 

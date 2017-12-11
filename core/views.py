@@ -148,7 +148,6 @@ class RecommendationView(LoginRequiredMixin, View):
         self_ings = {ing.name: ing.amount for ing in ingredients if ing.amount}
 
         recipes = Recipe.objects.prefetch_related('ingredient_set')
-
         recipes = {i:recipe for i, recipe in enumerate(recipes)}
         output = []
 
