@@ -10,11 +10,57 @@ class Test(object):
     def __init__(self):
         self.site = 'http://127.0.0.1:8000'
         self.delay = 2  # seconds
-        self.username = 'semre'
-        self.email = 'semre@s.com'
-        self.password = '1234qwer'
+        self.username = 'ismail2'
+        self.email = 'ismail@ismail.com'
+        self.password = 'namdar123'
         self.browser = None
 
+    def check_sign_up(self):
+        url = '/'
+
+        self.browser.get(self.site + url)
+
+        signup_input = WebDriverWait(self.browser, self.delay).until(
+            lambda x: x.find_element_by_xpath('//a[@name="pop-up-signup"]'))
+
+        signup_input.click()
+
+        popups = WebDriverWait(self.browser, self.delay).until(
+            lambda x: x.find_elements_by_xpath('//div[@class="mfp-with-anim mfp-hide mfp-dialog clearfix"]'))
+
+        username_input = popups[1].find_element_by_xpath('//input[@name="username"]')
+        email_input = popups[1].find_element_by_xpath('//input[@name="email"]')
+        password_input = popups[1].find_element_by_xpath('//input[@name="password"]')
+        password2_input = popups[1].find_element_by_xpath('//input[@name="password2"]')
+        checkbox_input = popups[1].find_element_by_xpath('//input[@class="i-check"]')
+
+        signup_button = popups[1].find_element_by_xpath('//input[@name="sign-up"]')
+
+        username_input.send_keys(self.username)
+        email_input.send_keys(self.email)
+        password_input.send_keys(self.password)
+        password2_input.send_keys(self.password)
+        checkbox_input.click()
+
+        signup_button.click()
+
+        assert True
+
+    def check_sign_in(self):
+        url = '/'
+
+        self.browser.get(self.site + url)
+
+        login_input = WebDriverWait(self.browser, self.delay).until(
+            lambda x: x.find_element_by_xpath('//a[@name="pop-up-login"]'))
+
+        login_input.click()
+
+        popup = WebDriverWait(self.browser, self.delay).until(
+            lambda x: x.find_element_by_xpath('//div[@class="mfp-with-anim mfp-hide mfp-dialog clearfix"]'))
+
+        username_input = popup.find_element_by_xpath('//input[@name="username"]')
+        password_input = popup.find_element_by_xpath('//input[@name="password"]')
 
     def check_login(self):
         url = '/admin'
@@ -85,7 +131,6 @@ class Test(object):
         assert textarea.text == random_comment
 
     def check_recommendation(self):
-
         self.browser.get(self.site + '/recommendation')
 
         product = WebDriverWait(self.browser, self.delay).until(
