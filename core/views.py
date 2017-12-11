@@ -147,7 +147,7 @@ class RecommendationView(LoginRequiredMixin, View):
         ingredients = request.user.ingredient_set.all()
         self_ings = {ing.name: ing.amount for ing in ingredients if ing.amount}
 
-        recipes = Recipe.objects.prefetch_related('ingredient_set')
+        recipes = Recipe.objects.prefetch_related('ingredient_set').exclude(user=None)
         recipes = {i:recipe for i, recipe in enumerate(recipes)}
         output = []
 
@@ -163,6 +163,7 @@ class RecommendationView(LoginRequiredMixin, View):
         recipes = [recipes[i] for i in output]
 
         return render(request, 'recommendation.html', locals())
+
 
 class BrewView(LoginRequiredMixin, View):
     @staticmethod
