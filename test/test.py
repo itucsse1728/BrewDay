@@ -10,9 +10,9 @@ class Test(object):
     def __init__(self):
         self.site = 'http://127.0.0.1:8000'
         self.delay = 2  # seconds
-        self.username = 'ismail'
-        self.email = 'ismail@ismail.com'
-        self.password = 'namdar123'
+        self.username = 'semre'
+        self.email = 'semre@s.com'
+        self.password = '1234qwer'
         self.browser = None
 
 
@@ -84,45 +84,47 @@ class Test(object):
 
         assert textarea.text == random_comment
 
+    def check_recommendation(self):
 
-    def check_profile(self):
-        url = '/profile'
+        self.browser.get(self.site + '/recommendation')
 
-        self.browser.get(self.site + url)
+        product = WebDriverWait(self.browser, self.delay).until(
+            lambda x: x.find_element_by_xpath('//div[@class="product"]'))
 
-        products = WebDriverWait(self.browser, self.delay).until(
-            lambda x: x.find_elements_by_xpath('//div[@class="product"]'))
+        tbody = product.find_element_by_xpath('.//table/tbody')
 
-        product = products[0]
+        ingredients = {}
 
-        name = product.find_element_by_tag_name('h4')
-        email = product.find_element_by_tag_name('p')
+        for row in tbody.find_elements_by_xpath('./tr'):
+            name, amount = row.find_elements_by_tag_name('td')
+            name, amount = name.text, amount.text
+            ingredients[name] = float(amount)
 
-        assert name.text == self.username and email.text == self.email
+        button = self.browser.find_element_by_xpath('//button[@name="submit"]')
 
-        product = products[1]
-
-        ingredients = product.find_element_by_tag_name('td')
-        name = ingredients[0].text
-
-        product.find_element_by_tag_name('button')[0].click()
+        button.click()
 
         products = WebDriverWait(self.browser, self.delay).until(
             lambda x: x.find_elements_by_xpath('//div[@class="product"]'))
 
-        product = products[1]
+        recipes = products[2:]
 
-        ingredients = product.find_element_by_tag_name('td')
+        for recipe in recipes:
+            tbody = recipe.find_element_by_xpath('.//table/tbody')
 
-        for ingredient in ingredients:
-            if ingredient.text == name:
-                assert False
+            for row in tbody.find_elements_by_tag_name('tr'):
+                name, amount = row.find_elements_by_tag_name('td')
+                name, amount = name.text, float(amount.text)
 
-        assert True
 
+                if amount and name not in ingredients:
+                    raise ValueError('invalid recommendation')
+
+                elif name in ingredients and amount > ingredients[name]:
+                    raise ValueError('Invalid amount for {} : {} > {}'.format(name, amount, ingredients[name]))
 
     def run(self):
-        self.browser = webdriver.Chrome('/Users/ismail/Downloads/chromedriver')
+        self.browser = webdriver.Chrome(r'C:\Users\msi-nb\Documents\selenium\chromedriver.exe')
 
         for attr in __class__.__dict__:
             if callable(getattr(self, attr)) and attr.startswith('check'):
