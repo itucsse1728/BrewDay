@@ -143,8 +143,8 @@ class RegisterView(CreateView):
 
         self.object = form.save(commit=False)
         self.object.set_password(form.cleaned_data.get('password'))
-        Ingredient.init_ingredients(self.object, INGREDIENTS)
         self.object.save()
+        Ingredient.init_ingredients(self.object, INGREDIENTS)
         login(self.request, self.object)
         return redirect(self.get_success_url())
 
