@@ -71,7 +71,7 @@
             </ul>
         </div>
         <div class="mfp-with-anim mfp-hide mfp-dialog clearfix" id="nav-account-dialog">
-            <h3 class="widget-title">Create Brew Day Account!</h3>
+            <h3 class="widget-title">Create Piva Account!</h3>
             <p>Brew Brew Brew!</p>
             <hr />
 
@@ -116,7 +116,7 @@
                     <label>Email</label>
                     <input class="form-control" type="text" />
                 </div>
-                <input class="btn btn-primary" type="submit" value="Şifreyi Resetle" />
+                <input class="btn btn-primary" type="submit" value="Reset Password" />
             </form>
         </div>
         <nav class="navbar navbar-inverse navbar-main yamm">
@@ -129,6 +129,12 @@
                     </a>
                 </div>
                 <div class="collapse navbar-collapse" id="main-nav-collapse">
+                    {% if request.user.is_authenticated %}
+                        <ul class="nav navbar-nav">
+                        <li class="dropdown"><a href="{% url 'core:profile' %}" data-effect="mfp-move-from-top" class="">{{ request.user.username }}</a>
+                        </li>
+                    </ul>
+                    {% endif %}
                     <ul class="nav navbar-nav">
                         <li class="dropdown"><a href="{% url 'core:recipe' %}"> Recipes<i class="drop-caret" data-toggle="dropdown"></i></a>
                         </li>
@@ -143,8 +149,6 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         {% if request.user.is_authenticated %}
-                        <li><a href="{% url 'core:profile' %}" data-effect="mfp-move-from-top" class="">{{ request.user.username }}</a>
-                        </li>
                         <li><a href="{% url 'core:logout' %}" class="glyphicon glyphicon-log-out"></a>
                         </li>
                         {% else %}
@@ -173,7 +177,8 @@
                             If you have any questions, please don't hesitate to contact us.</p>
                     </div>
                     <div class="col-md-3">
-                        <p>We are not responsible for the actions of users. If you encounter any problems or any copyright issue, please contact us. </p>
+                        <div class="gap-small"></div>
+                        <p style="font-size: 10px">We are not responsible for the actions of the users. If you encounter any problems or any copyright issue, please contact us. </p>
                     </div>
                 </div>
                 <ul class="main-footer-links-list">
