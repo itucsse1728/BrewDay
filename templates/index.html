@@ -108,6 +108,7 @@ used to vertically center elements, may need modification if you're not using de
                             <tr>
                                 <th>Ingredient</th>
                                 <th>Amount</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,6 +116,7 @@ used to vertically center elements, may need modification if you're not using de
                                     <tr>
                                         <td>{{ item.name }}</td>
                                         <td><input name="{{ item.name }}" type="text" placeholder="{{ item.amount }}"></td>
+                                        <td><button class="btn btn-danger pull-right" name="delete" value="{{ item.id }}"><em class="fa fa-trash"></em></button></td>
                                     </tr>
                             {% endfor %}
                                     <tr>
