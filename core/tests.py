@@ -2,6 +2,7 @@ from django.test import TestCase
 from .models import Recipe, Ingredient, User, Brew
 from .views import INGREDIENTS
 
+
 class TestRecommendation(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='dummy',
@@ -77,7 +78,7 @@ class TestProfile(TestCase):
 class TestBrew(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user(username='user-1', email='dummy@dmail.com', password='123')
-        self.user2 = User.objects.create_user(username='user-2', email='dummy@dmail.com', password='123')
+        self.user2 = User.objects.create_user(username='user-2', email='dummy2@dmail.com', password='123')
 
         self.recipe1 = Recipe.objects.create(name='recipe-1', user=self.user1, batch_size=123)
         self.recipe2 = Recipe.objects.create(name='recipe-2', user=self.user2, batch_size=123)
@@ -92,9 +93,9 @@ class TestBrew(TestCase):
         for i in range(1, 5):
             Ingredient.objects.create(name='ing' + str(i), amount=i, recipe=self.recipe3)
 
-        self.brew1 = Brew.objects.create(recipe=self.recipe1, note='Note 1', rate=5)
-        self.brew2 = Brew.objects.create(recipe=self.recipe1, note='Note 2', rate=3)
-        self.brew3 = Brew.objects.create(recipe=self.recipe2, note='Note 3', rate=4)
+        self.brew1 = Brew.objects.create(recipe=self.recipe1, user=self.user1, note='Note 1', rate=5)
+        self.brew2 = Brew.objects.create(recipe=self.recipe1, user=self.user1, note='Note 2', rate=3)
+        self.brew3 = Brew.objects.create(recipe=self.recipe2, user=self.user2, note='Note 3', rate=4)
 
     def test_rate(self):
         self.client.force_login(self.user1)
