@@ -36,9 +36,13 @@ class Ingredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, null=True, blank=True)
 
     @staticmethod
-    def init_ingredients(user, ingredients):
-        Ingredient.objects.bulk_create(Ingredient(name=ingredient, amount=0.0, user=user)
-                                       for ingredient in ingredients)
+    def init_ingredients(model, ingredients):
+        if isinstance(model, User):
+            Ingredient.objects.bulk_create(Ingredient(name=ingredient, amount=0.0, user=model)
+                                           for ingredient in ingredients)
+        else:
+            Ingredient.objects.bulk_create(Ingredient(name=ingredient, amount=0.0, recipe=model)
+                                           for ingredient in ingredients)
 
     def __str__(self):
         return self.name

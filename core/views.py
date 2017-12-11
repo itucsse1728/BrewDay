@@ -1,7 +1,7 @@
 from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, F
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
@@ -82,9 +82,9 @@ class RecommendationView(LoginRequiredMixin, View):
             Prefetch('ingredient_set',
                      queryset=queryset)
             ).exclude(~Q(ingredient__name__in=ings))
-
+        print(ings)
         for name, amount in ings.items():
-            recipes.filter(~Q(ingredient__name=name) | Q(ingredient__amount__lt=amount))
+            recipes = recipes.exclude(Q(ingredient__name=name) & Q(ingredient__amount__gt=amount))
 
         return render(request, 'recommendation.html', locals())
 

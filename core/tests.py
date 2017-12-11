@@ -1,40 +1,51 @@
 from django.test import TestCase
 from .models import Recipe, Ingredient, User, Brew
-
+from .views import INGREDIENTS
 
 class TestRecommendation(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='dummy@dmail.com',
+        self.user = User.objects.create_user(username='dummy',
                                              email='dummy@dmail.com',
                                              password='123')
+
+        self.user2 = User.objects.create_user(username='dummy1',
+                                              email='dummy@dmaik.com',
+                                              password='123')
+
+        Ingredient.init_ingredients(self.user2, INGREDIENTS)
+        Ingredient.init_ingredients(self.user, INGREDIENTS)
+
+        Ingredient.objects.filter(user=self.user).update(amount=5)
+
         self.recipe = Recipe.objects.create(name='recipe1',
                                             user=self.user,
                                             batch_size=123)
 
-        for i in range(1, 11):
-            Ingredient.objects.create(name='ing'+ str(i),
-                                      amount=i,
-                                      user=self.user)
-
-        for i in range(1, 11):
-            Ingredient.objects.create(name='ing'+ str(i),
-                                      amount=2*i-5,
+        for i, ingredient in enumerate(INGREDIENTS):
+            Ingredient.objects.create(name=ingredient,
+                                      amount= (i%2)*5,
                                       recipe=self.recipe)
 
         self.recipe2 = Recipe.objects.create(name='recipe2',
                                              user=self.user,
                                              batch_size=123)
 
-        for i in range(1, 5):
-            Ingredient.objects.create(name='ing' + str(i),
-                                      amount=i,
+        for i, ingredient in enumerate(INGREDIENTS):
+            Ingredient.objects.create(name=ingredient,
+                                      amount=10,
                                       recipe=self.recipe2)
+
+        self.recipe3 = Recipe.objects.create(name='recipe3',
+                                             user=self.user,
+                                             batch_size=1234)
+
+        Ingredient.init_ingredients(self.recipe3, INGREDIENTS)
 
     def test_recomm(self):
         self.client.force_login(self.user)
         response = self.client.post('/recommendation/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context['recipes']),2)
+        self.assertEqual(len(response.context['recipes']), 2)
 
 
 class TestProfile(TestCase):
