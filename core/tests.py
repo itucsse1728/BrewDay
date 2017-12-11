@@ -133,3 +133,30 @@ class TestBrew(TestCase):
         self.assertEqual(response.status_code, 401)
         self.brew3.refresh_from_db()
         self.assertNotEqual(self.brew3.note, note)  # should not change
+
+class TestRecipe(TestCase):
+    def setUp(self):
+
+        self.user = User.objects.create_user(username='dummy@dmail.com', email='dummy@dmail.com', password='123')
+        self.recipe = Recipe.objects.create(name='recipe', user=self.user, batch_size=123)
+        for i in range(1, 5):
+            Ingredient.objects.create(name='ing' + str(i), amount=1, recipe=self.recipe)
+
+    def test_recipe_create(self):
+
+        self.client.force_login(self.user)
+        response = self.client.post('/recipe/')
+
+        self.recipeCreat = Recipe.objects.create(name='recipeCreat', user=self.user, batch_size=123)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.recipeCreat.name, 'recipeCreat')
+
+    def test_recipe_delete(self):
+
+        self.client.force_login(self.user)
+        response = self.client.post('/recipe/')
+
+        self.recipeDel = Recipe.objects.create(name='recipeDel', user=self.user, batch_size=123)
+        self.recipeDel.delete()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.recipeDel.id, None)
