@@ -63,6 +63,10 @@ class IngredientView(LoginRequiredMixin, View):
                 ingredient.amount = float(request.POST[ingredient.name])
                 ingredient.save()
 
+            #if request.POST.get("new-ingredient-name", None) and request.POST.get("new-ingredient-amount", None):
+
+
+
         return render(request, "index.html", locals())
 
 
